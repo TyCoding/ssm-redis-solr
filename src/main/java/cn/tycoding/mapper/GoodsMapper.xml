@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.tycoding.mapper.GoodsMapper">
+
+    <resultMap id="baseMap" type="cn.tycoding.entity.Goods">
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="title" column="title" jdbcType="VARCHAR"/>
+        <result property="price" column="price" jdbcType="VARCHAR"/>
+        <result property="image" column="image" jdbcType="VARCHAR"/>
+        <result property="category" column="category" jdbcType="VARCHAR"/>
+        <result property="brand" column="brand" jdbcType="VARCHAR"/>
+        <result property="seller" column="seller" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!-- 查询所有 -->
+    <select id="findAll" resultType="cn.tycoding.entity.Goods">
+        SELECT * FROM tb_item
+    </select>
+
+    <!-- 条件查询 -->
+    <select id="findByPage" parameterType="cn.tycoding.entity.Goods" resultMap="baseMap">
+        SELECT * FROM tb_item WHERE 1=1
+        <if test="brand != null">
+            AND brand LIKE CONCAT('%', #{brand}, '%')
+        </if>
+        <if test="seller != null">
+            AND seller LIKE CONCAT('%', #{seller}, '%')
+        </if>
+    </select>
+
+    <!-- 根据id查询 -->
+    <select id="findById" parameterType="Long" resultMap="baseMap">
+        SELECT * FROM tb_item WHERE id = #{id}
+    </select>
+
+    <!-- 添加数据 -->
+    <insert id="create" parameterType="cn.tycoding.entity.Goods">
+        INSERT INTO tb_item(title, price, image, category, brand, seller)
+        VALUES(#{title}, #{price}, #{image}, #{category}, #{brand}, #{seller})
+    </insert>
+
+    <!-- 更新数据 -->
+    <update id="update" parameterType="cn.tycoding.entity.Goods">
+        UPDATE tb_item
+        <set>
+            <if test="title != null">
+                title = #{title},
+            </if>
+            <if test="price != null">
+                price = #{price},
+            </if>
+            <if test="image != null">
+                image = #{image},
+            </if>
+            <if test="category != null">
+                category = #{category},
+            </if>
+            <if test="brand != null">
+                brand = #{brand},
+            </if>
+            <if test="seller != null">
+                seller = #{seller},
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除 -->
+    <delete id="delete" parameterType="Long">
+        DELETE FROM tb_item WHERE id = #{id}
+    </delete>
+
+</mapper>

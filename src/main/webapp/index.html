@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="static/element-ui/lib/theme-chalk/index.css"/>
+    <link rel="stylesheet" href="static/font/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="static/css/index.css"/>
+</head>
+<body>
+
+<div id="app">
+    <!-- header -->
+    <el-menu mode="horizontal" :default-active="activeIndex">
+        <el-menu-item index="0" id="logo">Solr的简单实现</el-menu-item>
+        <el-menu-item index="1"><a href="index.html">首页</a></el-menu-item>
+        <el-menu-item index="2"><a href="goods.html">商品管理</a></el-menu-item>
+        <el-menu-item id="author" index="3">
+            <img class="el-tooltip" src="http://tycoding.cn/author/avatar.png"/>
+            <el-dropdown>
+                  <span class="el-dropdown-link">TyCoding<i class="el-icon-arrow-down el-icon--right"></i></span>
+                <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item>首页</el-dropdown-item>
+                    <el-dropdown-item><a href="https://github.com/TyCoding" target="_blank">GitHub</a></el-dropdown-item>
+                    <el-dropdown-item><a href="http://tycoding.cn/" target="_blank">Blog</a></el-dropdown-item>
+                    <el-dropdown-item divided><a href="/logout">退出</a></el-dropdown-item>
+                </el-dropdown-menu>
+            </el-dropdown>
+        </el-menu-item>
+    </el-menu>
+
+    <!-- search -->
+    <div style="margin-top: 50px;">
+        <el-row :gutter="20">
+            <el-col :span="6" :offset="9">
+                <el-input placeholder="请输入内容" type="text" class="input-with-select" @keyup.enter.native="search" v-model="searchMap.keywords">
+                    <el-button slot="append" icon="el-icon-search" @click="search"></el-button>
+                </el-input>
+            </el-col>
+        </el-row>
+
+        <!-- search-sort -->
+        <div class="sort">
+            <el-row :gutter="20">
+                <el-col :span="20" :offset="2">
+                    <el-card class="box-card">
+                        <div class="waring">
+                            <div>
+                                <el-form label-width="80px">
+                                    <el-form-item label="分类:">
+                                        <div>
+                                            <el-checkbox-group :max="1" v-model="change.category" @change="selectMethod">
+                                                <el-checkbox v-for="classify in classifyData.category" :label="classify" border size="mini">{{classify}}</el-checkbox>
+                                            </el-checkbox-group>
+                                        </div>
+                                    </el-form-item>
+                                    <el-form-item label="品牌:">
+                                        <div>
+                                            <el-checkbox-group :max="1" v-model="change.brand" @change="selectMethod">
+                                                <el-checkbox v-for="classify in classifyData.brand" :label="classify" border size="mini">{{classify}}</el-checkbox>
+                                            </el-checkbox-group>
+                                        </div>
+                                    </el-form-item>
+                                    <el-form-item label="价格:">
+                                        <div>
+                                            <el-checkbox-group v-model="change.price" :max="1" @change="selectMethod">
+                                                <el-checkbox :label="'0-500'" border size="mini">0-500元</el-checkbox>
+                                                <el-checkbox :label="'500-1000'" border size="mini">500-1000元</el-checkbox>
+                                                <el-checkbox :label="'1000-2000'" border size="mini">1000-2000元</el-checkbox>
+                                                <el-checkbox :label="'2000-3000'" border size="mini">2000-3000元</el-checkbox>
+                                                <el-checkbox :label="'3000-*'" border size="mini">3000元以上</el-checkbox>
+                                            </el-checkbox-group>
+                                        </div>
+                                    </el-form-item>
+                                    <el-form-item label="综合排序:">
+                                        <div>
+                                            <el-radio-group v-model="searchMap.sort" @change="selectMethod">
+                                                <el-radio :label="'asc'" border size="mini">价格↑</el-radio>
+                                                <el-radio :label="'desc'" border size="mini">价格↓</el-radio>
+                                            </el-radio-group>
+                                        </div>
+                                    </el-form-item>
+                                </el-form>
+                            </div>
+                        </div>
+                    </el-card>
+                </el-col>
+            </el-row>
+        </div>
+    </div>
+
+    <!-- main -->
+    <div id="main">
+        <el-row :gutter="10">
+            <el-col :span="22" :offset="1">
+                <el-container>
+                    <div>
+                        <div class="show" v-for="item in goods">
+                            <div class="img">
+                                <img :src="item.image"/>
+                            </div>
+                            <div class="price">
+                                <span>￥ {{item.price}}</span>
+                            </div>
+                            <div class="title">
+                                <span v-html="item.title"></span>
+                            </div>
+                        </div>
+                    </div>
+                </el-container>
+            </el-col>
+        </el-row>
+    </div>
+
+    <!-- paging -->
+    <div>
+        <el-row :gutter="10">
+            <el-col :span="10" :offset="2">
+                <div class="pagination">
+                    <el-pagination
+                            background
+                            @size-change="handleSizeChange"
+                            @current-change="handleCurrentChange"
+                            :current-page="pageConf.pageCode"
+                            :page-sizes="pageConf.pageOption"
+                            :page-size="pageConf.pageSize"
+                            layout="total, sizes, prev, pager, next, jumper"
+                            :total="pageConf.totalPage">
+                    </el-pagination>
+                </div>
+            </el-col>
+        </el-row>
+    </div>
+
+    <!-- footer -->
+    <div class="footer">
+        <el-container>
+            <el-footer>
+                <el-row :gutter="20">
+                    <el-col :span="8" :offset="10">
+                        <div class="footer-inner">
+                            <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+                                <span class="with-love">
+                                    <i class="fa fa-heartbeat"></i>
+                                </span>
+                                <span class="author" itemprop="copyrightHolder">TyCoding</span>
+                            </div>
+                            <label>整合SpringMVC + Mybatis + Redis + Solr &mdash; 简单的实现电商项目中Solr搜索功能</label>
+                        </div>
+                    </el-col>
+                </el-row>
+            </el-footer>
+        </el-container>
+    </div>
+
+</div>
+
+</body>
+<script type="text/javascript" src="static/vue/vue.js"></script>
+<script type="text/javascript" src="static/element-ui/lib/index.js"></script>
+<script type="text/javascript" src="static/vue/vue-resource.js"></script>
+<script type="text/javascript" src="static/js/index.js"></script>
+</html>

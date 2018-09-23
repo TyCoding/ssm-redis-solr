@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.tycoding.mapper.UserMapper">
+
+    <!-- 根据用户名查询 -->
+    <select id="findByName" parameterType="String" resultType="cn.tycoding.entity.User">
+        SELECT * FROM tb_user WHERE username = #{username}
+    </select>
+
+    <!-- 创建用户 -->
+    <insert id="create" parameterType="cn.tycoding.entity.User">
+        INSERT INTO
+        tb_user(username,password,salt)
+        VALUES
+        (#{username},#{password},#{salt})
+    </insert>
+
+    <!-- 移除用户 -->
+    <delete id="delete" parameterType="Long">
+        DELETE FROM tb_user WHERE id = #{id}
+    </delete>
+
+    <!-- 更新用户信息 -->
+    <update id="update" parameterType="cn.tycoding.entity.User">
+        UPDATE tb_user
+        <set>
+            <if test="username != null">
+                username = #{username},
+            </if>
+            <if test="password != null">
+                password = #{password},
+            </if>
+            <if test="salt != null">
+                salt = #{salt},
+            </if>
+        </set>
+        WHERE
+        id = #{id}
+    </update>
+
+    <!-- 根据ID查询用户 -->
+    <select id="findById" parameterType="Long" resultType="cn.tycoding.entity.User">
+        SELECT * FROM tb_user WHERE id = #{id}
+</select>
+</mapper>
