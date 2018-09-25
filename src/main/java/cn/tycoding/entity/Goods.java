@@ -3,6 +3,7 @@ package cn.tycoding.entity;
 import org.apache.solr.client.solrj.beans.Field;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * @auther TyCoding
@@ -17,7 +18,7 @@ public class Goods implements Serializable {
     @Field("item_title")
     private String title; //商品标题
     @Field("item_price")
-    private String price; //商品价格
+    private BigDecimal price; //商品价格
     @Field("item_image")
     private String image; //商品图片
     @Field("item_category")
@@ -30,7 +31,7 @@ public class Goods implements Serializable {
     public Goods() {
     }
 
-    public Goods(Long id, String title, String price, String category, String brand, String seller) {
+    public Goods(Long id, String title, BigDecimal price, String category, String brand, String seller) {
         this.id = id;
         this.title = title;
         this.price = price;
@@ -55,11 +56,11 @@ public class Goods implements Serializable {
         this.title = title;
     }
 
-    public String getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(String price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 

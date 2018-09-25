@@ -117,43 +117,33 @@ var vm = new Vue({
         },
         //更新
         sureEdit(editor) {
-            this.$refs[editor].validate((valid) => {
-                //关闭对话框
-                this.showEditor = false;
-                if (valid) {
-                    //调用更新数据的接口
-                    this.$http.post('/goods/update.do', JSON.stringify(this.editor)).then(result => {
-                        if (result.body.success) {
-                            //更新成功
-                            this.$message({
-                                type: 'success',
-                                message: result.body.message,
-                                duration: 6000
-                            });
-                            //刷新列表
-                            this.reloadList();
-                            this.goods = {};
-                            this.$refs.editor.resetFields();
-                        } else {
-                            //更新失败
-                            this.$message({
-                                type: 'warning',
-                                message: result.body.message,
-                                duration: 6000
-                            });
-                            //刷新列表
-                            this.reloadList();
-                            this.$refs.editor.resetFields();
-                        }
-                    }).catch(() => {
-                        this.$message({
-                            type: 'info',
-                            message: '已取消更新',
-                            duration: 6000
-                        })
+            //关闭对话框
+            this.showEditor = false;
+            //调用更新数据的接口
+            this.$http.post('/goods/update.do', JSON.stringify(this.editor)).then(result => {
+                if (result.body.success) {
+                    //更新成功
+                    this.$message({
+                        type: 'success',
+                        message: result.body.message,
+                        duration: 6000
                     });
+                    //刷新列表
+                    this.reloadList();
+                    this.goods = [];
+                    this.$refs.editor.resetFields();
+                } else {
+                    //更新失败
+                    this.$message({
+                        type: 'warning',
+                        message: result.body.message,
+                        duration: 6000
+                    });
+                    //刷新列表
+                    this.reloadList();
+                    this.$refs.editor.resetFields();
                 }
-            });
+            })
         },
         //删除
         sureDelete(ids) {
@@ -259,32 +249,39 @@ var vm = new Vue({
             //打开新增dialog
             this.showSave = true;
             this.editor = {}; //清空表单
+            this.fileList = []; //清空文件列表
             //清空原始数据
-            // this.editor.password = ''; //手动将密码框的值清空
             if (this.$refs['editor'] !== undefined) {
                 this.$refs['editor'].resetFields(); //经查询：可能是由于对象还没有生成，导致误读了空对象而报错
             }
         },
-        //更新按钮
+        //更新按钮（表格）
         handleEdit(id) {
             //打开dialog
             this.showEditor = true;
             this.editor = {}; //清空表单
             //查询当前id对应的数据
             this.$http.post('/goods/findById.do', {id: id}).then(result => {
-                this.editor = result.body;
+                this.fileList.forEach(row => {
+                    row.url = result.body[0].image; //将图片的URL地址赋值给file-list展示出来
+                });
+                this.editor = result.body[0];
                 //移除element-ui表单校验残留
                 this.$refs['editor'].resetFields();
-                //更新
-                this.sureEdit(this.editor);
             });
         },
         //更新按钮（checkbox）
         editSelect() {
             if (this.multipleSelection.length === 1) {
                 this.multipleSelection.forEach(row => {
+                    console.log(row);
                     this.editor = {}; //先清空数据
                     this.editor = row; //再赋值
+                    this.fileList.forEach(file => {
+                        file.url = row.image; //将图片的URL地址赋值给file-list展示出来
+                    });
+                    //移除element-ui表单校验残留
+                    this.$refs['editor'].resetFields();
                     this.showEditor = true; //打开对话框
                 });
             } else if (this.multipleSelection.length > 1) {

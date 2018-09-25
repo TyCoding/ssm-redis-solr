@@ -72,4 +72,9 @@
         DELETE FROM tb_item WHERE id = #{id}
     </delete>
 
+    <!-- 获取最新查询的ID值 -->
+    <select id="maxId" resultType="Long">
+        SELECT MAX(id) FROM tb_item
+    </select>
+
 </mapper>

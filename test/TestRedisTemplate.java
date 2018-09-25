@@ -14,11 +14,13 @@ import java.util.Set;
  * @date 2018/9/21
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:spring/spring-redis.xml")
+@ContextConfiguration(locations = {"classpath:spring/spring*.xml"})
 public class TestRedisTemplate {
 
     @Autowired
     private RedisTemplate redisTemplate;
+
+
 
     //=================值类型=================
     //设置值
@@ -90,7 +92,7 @@ public class TestRedisTemplate {
         redisTemplate.boundListOps("namelist2").leftPush("涂陌");
     }
 
-    //显示右压栈的集合
+    //显示左压栈的集合
     @Test
     public void getLeftValueByList(){
         List name2 = redisTemplate.boundListOps("namelist2").range(0, 10);
@@ -151,4 +153,5 @@ public class TestRedisTemplate {
         System.out.println(goods);
 //        redisTemplate.boundHashOps("goods").delete("all");
     }
+
 }

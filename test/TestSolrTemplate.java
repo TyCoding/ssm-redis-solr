@@ -8,6 +8,7 @@ import org.springframework.data.solr.core.query.result.ScoredPage;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,7 +28,7 @@ public class TestSolrTemplate {
     //添加
     @Test
     public void testAdd() {
-        Goods goods = new Goods(1L, "IPhone SE", "120", "手机", "Apple", "Apple");
+        Goods goods = new Goods(1L, "IPhone SE", BigDecimal.valueOf(120), "手机", "Apple", "Apple");
         solrTemplate.saveBean(goods);
         solrTemplate.commit(); //提交
     }
@@ -61,7 +62,7 @@ public class TestSolrTemplate {
 
         //循环插入100条数据
         for (int i = 0; i < 100; i++) {
-            Goods goods = new Goods(i + 1L, "华为Mate" + i, String.valueOf(2000 + i), "手机", "手机", "华为专卖店");
+            Goods goods = new Goods(i + 1L, "华为Mate" + i, BigDecimal.valueOf(2000 + i), "手机", "手机", "华为专卖店");
             list.add(goods);
         }
 
@@ -141,7 +142,7 @@ public class TestSolrTemplate {
     }
 
 
-    //查询所有
+    //查询所有，默认10条数据
     @Test
     public void findAll(){
         Query query = new SimpleQuery("*:*");

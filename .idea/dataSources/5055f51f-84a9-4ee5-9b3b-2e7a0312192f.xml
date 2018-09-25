@@ -943,7 +943,7 @@
     <column id="237" parent="233" name="price">
       <Position>3</Position>
       <Comment>商品价格</Comment>
-      <DataType>varchar(100)|0s</DataType>
+      <DataType>decimal(10,2 digit)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
     <column id="238" parent="233" name="image">

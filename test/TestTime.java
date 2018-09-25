@@ -44,10 +44,26 @@ public class TestTime {
     }
 
     /**
-     * 查询Solr索引库所有数据耗时（分页查询）
+     * 从redis中读取所有数据
+     * <p>
+     * 第一次运行，redis中还没有数据，是先从数据库中读取放入到redis中 //1032毫秒
+     * 第二次运行，从redis中读取数据 //116毫秒
      */
     @Test
     public void run2() {
+        Long startTime = System.currentTimeMillis(); //开始时间
+
+        goodsService.findAll();
+
+        Long endTime = System.currentTimeMillis(); //结束时间
+        System.out.println("从redis中读取所有数据，共耗时：" + (endTime - startTime) + "毫秒");
+    }
+
+    /**
+     * 查询Solr索引库所有数据耗时（分页查询）
+     */
+    @Test
+    public void run3() {
         Long startTime = System.currentTimeMillis(); //开始时间
         Query query = new SimpleQuery("*:*");
         query.setOffset(1);
@@ -58,19 +74,4 @@ public class TestTime {
         System.out.println("查询Solr索引库--共耗时：" + (endTime - startTime) + "毫秒"); //804毫秒
     }
 
-    /**
-     * 从redis中读取所有数据
-     * <p>
-     * 第一次运行，redis中还没有数据，是先从数据库中读取放入到redis中 //1032毫秒
-     * 第二次运行，从redis中读取数据 //116毫秒
-     */
-    @Test
-    public void run3() {
-        Long startTime = System.currentTimeMillis(); //开始时间
-
-        goodsService.findAll();
-
-        Long endTime = System.currentTimeMillis(); //结束时间
-        System.out.println("模拟从redis中读取所有数据，共耗时：" + (endTime - startTime) + "毫秒");
-    }
 }

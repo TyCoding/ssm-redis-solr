@@ -15,6 +15,7 @@ import org.springframework.data.solr.core.query.result.HighlightEntry;
 import org.springframework.data.solr.core.query.result.HighlightPage;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,13 +47,12 @@ public class GoodsServiceImpl implements GoodsService {
             //说明缓存中没有数据
             System.out.println("从数据库中读取数据放入redis...");
             contentList = goodsMapper.findAll();
-            redisTemplate.boundHashOps("Test").put("all", contentList); //存入redis中
+            redisTemplate.boundHashOps("goods").put("all", contentList); //存入redis中
         } else {
             System.out.println("从缓存中读取数据...");
         }
-
-//        return goodsMapper.findAll();
         return contentList;
+//        return goodsMapper.findAll();
     }
 
     @Override
@@ -63,21 +63,35 @@ public class GoodsServiceImpl implements GoodsService {
     @Override
     public void create(Goods goods) {
         goodsMapper.create(goods);
+
+        Long id = goodsMapper.maxId(); //获取根据主键自增插入的最新一条记录的ID值
+        goods.setId(id);
+
+        //更新索引库
+        solrTemplate.saveBean(goods);
+        solrTemplate.commit();
     }
 
     @Override
     public void update(Goods goods) {
         goodsMapper.update(goods);
+
+        //更新索引库
+        solrTemplate.deleteById(String.valueOf(goods.getId()));
+        solrTemplate.commit();
+        List<Goods> list = new ArrayList<Goods>();
+        list.add(goods);
+        solrTemplate.saveBeans(list);
+        solrTemplate.commit();
     }
 
     @Override
     public void delete(Long... ids) {
-        Query query = new SimpleQuery();
         for (Long id : ids) {
             goodsMapper.delete(id);
-            Criteria criteria = new Criteria("item_id").in(id);
-            query.addCriteria(criteria);
-            solrTemplate.delete(query);
+
+            //更新索引库
+            solrTemplate.deleteById(String.valueOf(id));
             solrTemplate.commit();
         }
     }
@@ -112,6 +126,7 @@ public class GoodsServiceImpl implements GoodsService {
         map.putAll(searchList(searchMap));
         return map;
     }
+
 
     //搜索列表
     private Map searchList(Map searchMap) {

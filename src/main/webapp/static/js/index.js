@@ -107,7 +107,7 @@ new Vue({
         //首先加载分类数据
         this.getClassifyData();
 
-        this.searchMap.pageCode = this.pageConf.pageCode;
+        this.searchMap.pageCode = this.pageConf.pageCode; //初始化设置分页参数
         this.searchMap.pageSize = this.pageConf.pageSize;
 
         this.search();

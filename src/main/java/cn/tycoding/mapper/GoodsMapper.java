@@ -22,4 +22,11 @@ public interface GoodsMapper {
     void update(Goods goods);
 
     void delete(Long id);
+
+    /**
+     * 获取通过自增组件最新插入的id值
+     *
+     * @return
+     */
+    Long maxId();
 }
