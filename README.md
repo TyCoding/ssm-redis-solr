@@ -14,25 +14,48 @@ IDEA + Maven + Tomcat8
 
 ```
 ssm-redis-solr
-|-- src/main/java/cn.tycoding/
-|   |-- controller -- springMVC-web层
-|   |-- credentials -- shiro密码加密验证服务类CredentialsMatcher,用于登录错误次数限制
-|   |-- entity -- javaBean实体类
-|   |-- mapper -- mybatis-mapper层接口和XML映射文件
-|   |-- realm -- shiro自定义Realm实现类
-|   |-- service -- service服务层接口
-|       |-- impl -- service服务层接口实现类
-|   |-- utils -- 通用util工具类
-|-- src/main/resources/
-|   |-- mybatis -- mybatis配置文件
-|   |-- other -- 一些存放参数的配置文件
-|   |-- spring -- spring集成shiro,myabtis,mvc,redis,solr的配置文件
-|-- src/main/webapp/
-|   |-- static -- 前端静态依赖文件
-|   |-- WEB-INF -- web.xml
+├── README
+├── README.md
+├── db
+│   ├── sys_schema.sql  -- 建表SQL
+│   └── tb_item.sql  -- 商品数据，共934条数据
+├── pom.xml
+├── src
+│   ├── main
+│   │   ├── java
+│   │   │   └── cn
+│   │   │       └── tycoding
+│   │   │           ├── controller  -- SpringMVC的控制层（web层）
+│   │   │           ├── credentials  -- shiro密码加密验证服务类CredentialsMatcher,用于登录错误次数限制
+│   │   │           ├── entity  -- javaBean实体类
+│   │   │           ├── mapper  -- mybatis-mapper层接口和XML映射文件
+│   │   │           ├── realm -- shiro自定义Realm实现类
+│   │   │           ├── service -- service服务层接口
+│   │   │           └── utils -- 通用util工具类
+│   │   ├── resources
+│   │   │   ├── mybatis -- mybatis配置文件
+│   │   │   ├── other -- 存放参数的配置文件
+│   │   │   └── spring -- spring集成shiro,myabtis,mvc,redis,solr的配置文件
+│   │   └── webapp
+│   │       ├── WEB-INF
+│   │       ├── goods.html  -- 商品列表页
+│   │       ├── index.html  -- 项目首页
+│   │       ├── login.html  -- 登录页
+│   │       └── static -- 前端静态依赖文件
+│   └── test
 ```
 
 <br/>
+
+**写在前面**
+
+1. 本项目中使用的8081端口。
+2. 你需要在本地或服务器上配置Solr和Redis，文档中都配置在本地演示的。其中：redis占用6379端口（默认）、solr配置在Tomcat中，你可以下载我在GitHub上发布的配置好的solr，solr占用8080端口。
+3. 使用命令`redis-server &`命令启动Redis，启动成功会显示一个大Logo。
+4. 启动部署了solr的Tomcat，默认使用8080端口，启动成功后用浏览器访问`http://localhost:8080/solr/index.html`，如果进入了solr的管理页面证明Solr配置、启动成功。
+5. 本例中将solr和redis部署在本地电脑上，如果你仔细阅读了这篇文档，启动项目应该是很容易的。如果你把solr或redis部署在其他地方，请自行修改`resource/spring/spring-solr.xml`和`resource/other/redis-config.properties`配置文件信息。
+6. 请修改`resource/other/jdbc.properties`中连接数据库的信息。
+7. 只有完成了上述步骤后再启动项目，不然项目会因为连接不上solr或redis而报错。
 
 # 准备
 
